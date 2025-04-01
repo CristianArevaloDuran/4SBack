@@ -32,7 +32,7 @@ async function login(req, res) {
             secure: false,
             sameSite: 'lax',
             priority: 'high',
-            maxAge: 1000 * 60 * 60
+            maxAge: 1000 * 60 * 60 * 24, // 1 day
         })
         .json({ message: "Login successful" });
 }

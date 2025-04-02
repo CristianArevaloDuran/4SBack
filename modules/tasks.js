@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import taskModel from '../models/taskModel.js';
 import statusModel from '../models/statusModel.js';
 import priorityModel from '../models/priorityModel.js';
+import sanitizeHtml from 'sanitize-html';
 
 // Cookie auth
 
@@ -93,7 +94,7 @@ export async function createTask(req, res) {
     const { content, priority } = req.body;
     const { id } = jwt.decode(req.cookies.token);
 
-    if (!description || !priority) {
+    if (!content || !priority) {
         return res.status(400).json({ message: "All fields are required" });
     }
     
@@ -103,8 +104,10 @@ export async function createTask(req, res) {
         return res.status(500).json({ message: "Server error" });
     }
 
+    const sanitizedContent = sanitizeHtml(content);
+
     const newTask = new taskModel({
-        content,
+        content: sanitizedContent,
         status: status._id,
         priority,
         userId: id

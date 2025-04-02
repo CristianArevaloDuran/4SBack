@@ -90,10 +90,10 @@ export async function getPriority(req, res) {
 // Tasks
 
 export async function createTask(req, res) {
-    const { title, description, priority } = req.body;
+    const { content, priority } = req.body;
     const { id } = jwt.decode(req.cookies.token);
 
-    if (!title || !description || !priority) {
+    if (!description || !priority) {
         return res.status(400).json({ message: "All fields are required" });
     }
     
@@ -104,8 +104,7 @@ export async function createTask(req, res) {
     }
 
     const newTask = new taskModel({
-        title,
-        description,
+        content,
         status: status._id,
         priority,
         userId: id
@@ -156,7 +155,7 @@ export async function getTask(req, res) {
 
 export async function updateTask(req, res) {
     const { taskId } = req.params;
-    const { title, description, status, priority } = req.body;
+    const { content, status, priority } = req.body;
     const id = jwt.decode(req.cookies.token).id.toString();        
 
     try {
@@ -178,19 +177,17 @@ export async function updateTask(req, res) {
 
         if (!task) {
             return res.status(404).json({ message: "Task not found" });
-        } else if (!title && !description && !status && !priority) {
+        } else if (!content && !status && !priority) {
             return res.status(400).json({ message: "All fields are required" });
         } else if (
-            title === task.title && 
-            description === task.description && 
+            content === task.content && 
             status === task.status.toString() && 
             priority === task.priority.toString()
         ) {
             return res.status(400).json({ message: "No changes" });
         }
 
-        if (title) task.title = title;
-        if (description) task.description = description;
+        if (content) task.content = content;
         if (status) task.status = status;
         if (priority) task.priority = priority;
 

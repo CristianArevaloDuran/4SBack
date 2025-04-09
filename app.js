@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 import connection from './db/connection.js';
 import register from './modules/register.js';
-import { createTask, getTasks, getTask, createStatus, getStatuses, getStatus, createPriority, getPriorities, getPriority, updateTask, deleteTask } from './modules/tasks.js';
+import { createTask, getTasks, getTask, createStatus, getStatuses, getStatus, createPriority, getPriorities, getPriority, updateTask, doneTask, deleteTask } from './modules/tasks.js';
 import { login, verifyToken, userData, userProfilePic } from './modules/auth.js';
 
 dotenv.config();
@@ -78,6 +78,7 @@ app.post('/create-task', verifyToken, createTask);
 app.get('/get-tasks', verifyToken, getTasks);
 app.get('/get-task/:taskId', verifyToken, getTask);
 app.put('/update-task/:taskId', verifyToken, updateTask);
+app.put('/done-task/:taskId', verifyToken, doneTask);
 app.delete('/delete-task/:taskId', verifyToken, deleteTask);
 
 app.listen(PORT, '0.0.0.0', () => {

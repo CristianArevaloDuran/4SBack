@@ -93,6 +93,7 @@ export async function getPriority(req, res) {
 export async function createTask(req, res) {
     const { content, priority } = req.body;
     const { id } = jwt.decode(req.cookies.token);
+    
 
     if (!content || !priority) {
         return res.status(400).json({ message: "All fields are required" });
@@ -158,49 +159,48 @@ export async function getTask(req, res) {
 
 export async function updateTask(req, res) {
     const { taskId } = req.params;
-    const { content, status, priority } = req.body;
+    const { content, priority } = req.body;
+    console.log(taskId, content, priority);
+    
     const id = jwt.decode(req.cookies.token).id.toString();        
-
+    
     try {
         const task = await taskModel.findById(taskId);
         const taskUserId = task.userId.toString();
         
         try {
-            const getStatus = await statusModel.findById(status);
             const getPriority = await priorityModel.findById(priority);
 
-            if (!getStatus || !getPriority) {
-                return res.status(404).json({ message: "Status or priority not found" });
+            if (!getPriority) {
+                return res.status(404).json({ message: "Priority not found" });
             }
         } catch (err) {
-            return res.status(500).json({ message: err.message });
+            return res.status(500).json({ message: err.message, 'error': '1' });
         }
 
-        if(!cookieAuth(taskUserId, id, res)) return;
+        if(!cookieAuth(taskUserId, id)) return;
 
         if (!task) {
             return res.status(404).json({ message: "Task not found" });
-        } else if (!content && !status && !priority) {
+        } else if (!content && !priority) {
             return res.status(400).json({ message: "All fields are required" });
         } else if (
             content === task.content && 
-            status === task.status.toString() && 
             priority === task.priority.toString()
         ) {
             return res.status(400).json({ message: "No changes" });
         }
 
         if (content) task.content = content;
-        if (status) task.status = status;
         if (priority) task.priority = priority;
 
         await task
             .save()
             .then(() => res.status(200).json({ message: "Task updated", task }))
-            .catch((err) => res.status(500).json({ message: err.message }));
+            .catch((err) => res.status(500).json({ message: err.message, 'error': '2' }));
     }
     catch(err){
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: err.message, 'error': '3' });
     }
 }
 

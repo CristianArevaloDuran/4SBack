@@ -13,7 +13,7 @@ const PORT = process.env.PORT;
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.4:3000', 'http://161.18.146.171:3000'];
+const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.5:3000', 'http://161.18.146.171:3000'];
 
 connection();
 app.use(express.json());
